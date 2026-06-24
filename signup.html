@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create your account — AI Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+
+/* ============ TOKENS (shared with index.html) ============ */
+:root{
+  --ink:#0B0D0E;
+  --ink-soft:#15181a;
+  --panel:#181b19;
+  --panel-line:#2a2e2b;
+  --paper:#F5F3EE;
+  --paper-dim:#e9e5db;
+  --signal:#FF5A1F;
+  --signal-dim:#a73f17;
+  --sage:#7C8A82;
+  --sage-light:#aab3ad;
+  --text-on-ink:#EFEDE6;
+  --text-on-ink-dim:#8c9590;
+  --text-on-paper:#15181a;
+  --text-on-paper-dim:#5b6661;
+
+  --display: 'Fraunces', serif;
+  --body: 'Inter', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+
+  --edge: clamp(20px, 5vw, 48px);
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+body{
+  background:var(--ink);
+  color:var(--text-on-ink);
+  font-family:var(--body);
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+img,svg{display:block; max-width:100%;}
+a{color:inherit; text-decoration:none;}
+button{font-family:inherit; cursor:pointer; border:none; background:none;}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+}
+:focus-visible{ outline:2px solid var(--signal); outline-offset:3px; border-radius:2px; }
+
+.logo{
+  font-family:var(--display); font-size:20px; font-weight:600;
+  display:flex; align-items:center; gap:9px; letter-spacing:-0.01em;
+}
+.logo .dot{ width:8px; height:8px; background:var(--signal); border-radius:50%; }
+
+.eyebrow{
+  font-family:var(--mono); font-size:12px; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--signal); display:flex; align-items:center; gap:10px; margin-bottom:20px;
+}
+.eyebrow::before{
+  content:''; width:6px; height:6px; background:var(--signal); border-radius:50%;
+  animation:pulse-dot 2.4s ease-out infinite;
+}
+@keyframes pulse-dot{
+  0%{ box-shadow:0 0 0 0 rgba(255,90,31,0.5); }
+  70%{ box-shadow:0 0 0 8px rgba(255,90,31,0); }
+  100%{ box-shadow:0 0 0 0 rgba(255,90,31,0); }
+}
+
+/* ============ BUTTONS ============ */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:9px;
+  padding:14px 26px; font-family:var(--body); font-weight:600; font-size:14.5px;
+  border-radius:3px;
+  transition:transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
+  white-space:nowrap; width:100%;
+}
+.btn-primary{ background:var(--signal); color:#100400; }
+.btn-primary:hover{ transform:translateY(-1px); box-shadow:0 8px 24px -8px rgba(255,90,31,0.55); }
+.btn-ghost{ border:1px solid var(--panel-line); color:var(--text-on-ink); background:transparent; }
+.btn-ghost:hover{ border-color:var(--sage-light); background:rgba(255,255,255,0.03); }
+
+/* ============ LAYOUT ============ */
+.auth-shell{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  min-height:100vh;
+}
+@media (max-width:900px){
+  .auth-shell{ grid-template-columns:1fr; }
+  .auth-panel{ display:none; }
+}
+
+.auth-form-side{
+  display:flex; flex-direction:column;
+  padding:36px var(--edge) 60px;
+}
+.auth-form-side .top-row{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:auto;
+}
+.back-link{
+  font-family:var(--mono); font-size:12.5px; color:var(--text-on-ink-dim);
+  display:flex; align-items:center; gap:7px; transition:color .15s ease;
+}
+.back-link:hover{ color:var(--text-on-ink); }
+
+.auth-form-wrap{
+  width:100%; max-width:380px; margin:0 auto; padding-top:48px;
+}
+.auth-form-wrap h1{
+  font-family:var(--display); font-weight:500; font-size:32px;
+  color:var(--paper); margin-bottom:8px; letter-spacing:-0.01em;
+}
+.auth-form-wrap .sub{
+  color:var(--text-on-ink-dim); font-size:14.5px; margin-bottom:36px;
+}
+.auth-form-wrap .sub a{ color:var(--signal); font-weight:600; }
+.auth-form-wrap .sub a:hover{ text-decoration:underline; }
+
+.form-row{ display:flex; gap:12px; }
+.form-field{ margin-bottom:18px; flex:1; }
+.form-field label{
+  display:block; font-family:var(--mono); font-size:11px; text-transform:uppercase;
+  letter-spacing:0.06em; color:var(--text-on-ink-dim); margin-bottom:8px;
+}
+.form-field input{
+  width:100%; background:var(--ink-soft); border:1px solid var(--panel-line);
+  border-radius:5px; padding:13px 15px; color:var(--paper);
+  font-family:var(--body); font-size:14.5px; transition:border-color .15s ease;
+}
+.form-field input:focus{ border-color:var(--signal); outline:none; }
+.form-field input::placeholder{ color:var(--text-on-ink-dim); opacity:0.55; }
+.field-hint{ font-size:12px; color:var(--text-on-ink-dim); margin-top:7px; }
+.field-error{ font-size:12px; color:var(--signal); margin-top:7px; display:none; }
+.form-field.invalid input{ border-color:var(--signal); }
+.form-field.invalid .field-error{ display:block; }
+
+.check-row{
+  display:flex; align-items:flex-start; gap:10px; margin-bottom:28px;
+  font-size:13px; color:var(--text-on-ink-dim); line-height:1.5;
+}
+.check-row input{ margin-top:3px; accent-color:var(--signal); width:14px; height:14px; flex-shrink:0; }
+.check-row a{ color:var(--text-on-ink); text-decoration:underline; text-decoration-color:var(--panel-line); }
+
+.divider{
+  display:flex; align-items:center; gap:14px; margin:28px 0;
+  font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:0.06em;
+  color:var(--text-on-ink-dim);
+}
+.divider::before, .divider::after{ content:''; flex:1; height:1px; background:var(--panel-line); }
+
+.oauth-row{ display:flex; gap:12px; }
+.oauth-btn{
+  flex:1; display:flex; align-items:center; justify-content:center; gap:9px;
+  padding:12px; border:1px solid var(--panel-line); border-radius:5px;
+  font-size:13.5px; font-weight:500; color:var(--text-on-ink);
+  transition:border-color .15s ease, background .15s ease;
+}
+.oauth-btn:hover{ border-color:var(--sage-light); background:rgba(255,255,255,0.03); }
+
+.form-msg{
+  font-family:var(--mono); font-size:12.5px; padding:12px 14px; border-radius:5px;
+  margin-bottom:20px; display:none; border:1px solid var(--panel-line);
+}
+.form-msg.show{ display:block; }
+.form-msg.success{ color:#7fb88a; border-color:#2c4a32; background:rgba(127,184,138,0.06); }
+
+/* ============ BRAND PANEL ============ */
+.auth-panel{
+  background:linear-gradient(165deg, var(--panel), #0e100f);
+  border-left:1px solid var(--panel-line);
+  position:relative;
+  display:flex; flex-direction:column; justify-content:space-between;
+  padding:48px;
+  overflow:hidden;
+}
+.auth-panel::before{
+  content:'';
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size:56px 56px;
+  mask-image:radial-gradient(circle at 60% 40%, black, transparent 70%);
+}
+.panel-quote{
+  position:relative; z-index:1; max-width:420px; margin-top:auto; margin-bottom:auto;
+}
+.panel-quote .mark{ font-family:var(--display); font-style:italic; font-size:26px; line-height:1.5; color:var(--paper); margin-bottom:24px; }
+.panel-quote .who{ font-family:var(--mono); font-size:12.5px; color:var(--text-on-ink-dim); }
+.panel-quote .who strong{ color:var(--paper); font-weight:500; }
+
+.panel-stats{
+  position:relative; z-index:1;
+  display:flex; gap:36px;
+}
+.panel-stats div{ font-family:var(--mono); }
+.panel-stats .n{ font-size:26px; color:var(--paper); font-weight:500; display:block; }
+.panel-stats .l{ font-size:11px; color:var(--text-on-ink-dim); text-transform:uppercase; letter-spacing:0.05em; margin-top:4px; }
+
+</style>
+</head>
+<body>
+
+<div class="auth-shell">
+
+  <div class="auth-form-side">
+    <div class="top-row">
+      <a class="logo" href="index.html.html"><span class="dot"></span>AI Nexus</a>
+      <a class="back-link" href="index.html.html">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M13 8H3M3 8L7 4M3 8L7 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Back to site
+      </a>
+    </div>
+
+    <div class="auth-form-wrap">
+      <div class="eyebrow">14-day free trial</div>
+      <h1>Create your account</h1>
+      <p class="sub">Already have one? <a href="login.html">Sign in</a></p>
+
+      <div class="form-msg success" id="formMsg"></div>
+
+      <form id="signupForm" novalidate>
+        <div class="form-row">
+          <div class="form-field" id="field-firstname">
+            <label for="su-first">First name</label>
+            <input type="text" id="su-first" placeholder="Ada" autocomplete="given-name" required>
+            <div class="field-error">Enter your first name.</div>
+          </div>
+          <div class="form-field" id="field-lastname">
+            <label for="su-last">Last name</label>
+            <input type="text" id="su-last" placeholder="Lovelace" autocomplete="family-name" required>
+            <div class="field-error">Enter your last name.</div>
+          </div>
+        </div>
+
+        <div class="form-field" id="field-email">
+          <label for="su-email">Work email</label>
+          <input type="email" id="su-email" placeholder="you@company.com" autocomplete="email" required>
+          <div class="field-error">Enter a valid email address.</div>
+        </div>
+
+        <div class="form-field" id="field-company">
+          <label for="su-company">Company</label>
+          <input type="text" id="su-company" placeholder="Your company name" autocomplete="organization" required>
+          <div class="field-error">Enter your company name.</div>
+        </div>
+
+        <div class="form-field" id="field-password">
+          <label for="su-password">Password</label>
+          <input type="password" id="su-password" placeholder="At least 8 characters" autocomplete="new-password" required minlength="8">
+          <div class="field-hint">Minimum 8 characters.</div>
+          <div class="field-error">Password must be at least 8 characters.</div>
+        </div>
+
+        <div class="check-row">
+          <input type="checkbox" id="su-terms" required>
+          <label for="su-terms">I agree to the <a href="terms.html" target="_blank">Terms of Service</a> and <a href="privacy.html" target="_blank">Privacy Policy</a>.</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+          Create account
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+
+        <div class="divider">or sign up with</div>
+
+        <div class="oauth-row">
+          <button type="button" class="oauth-btn" id="googleBtn">
+            <svg width="15" height="15" viewBox="0 0 16 16"><path fill="#4285F4" d="M15.7 8.2c0-.5 0-1-.1-1.5H8v3h4.3c-.2 1-.8 1.9-1.7 2.5v2h2.8c1.6-1.5 2.3-3.7 2.3-6z"/><path fill="#34A853" d="M8 16c2.1 0 3.9-.7 5.2-1.9l-2.8-2c-.8.5-1.7.8-2.8.8-2.4 0-4.5-1.6-5.2-3.8H0v2.1C1.4 14.3 4.5 16 8 16z"/><path fill="#FBBC05" d="M2.4 9.5C2.2 8.9 2.1 8.5 2.1 8s.1-.9.3-1.5V4.4H0C-.4 5.5-.6 6.7-.6 8s.2 2.5.6 3.6l2.4-2.1z" transform="translate(.6)"/><path fill="#EA4335" d="M8 3.2c1.2 0 2.2.4 3 1.2l2.5-2.4C12 .6 10.1 0 8 0 4.5 0 1.4 1.7 0 4.4l2.4 2.1C3.5 4.8 5.6 3.2 8 3.2z"/></svg>
+            Google
+          </button>
+          <button type="button" class="oauth-btn" id="githubBtn">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.6 0 0 3.6 0 8c0 3.5 2.3 6.5 5.5 7.6.1-.5.1-1.2.1-1.8-.1 0-.1 0-.2 0-.7 0-1.4-.3-1.8-.9-.4-.6-.6-1.4-1.2-1.7-.2-.1-.3-.2-.3-.4 0-.2.3-.3.6-.3.6.1 1.1.5 1.4 1 .4.6 1 .9 1.8.6.1-.4.3-.7.5-.9-1.7-.2-3.3-1-3.3-3.4 0-.7.3-1.4.8-1.9-.1-.2-.3-.9.1-1.9.7-.2 1.5.3 2.1.7.6-.2 1.3-.3 2-.3s1.4.1 2 .3c.6-.4 1.4-.9 2.1-.7.4 1 .2 1.7.1 1.9.5.5.8 1.2.8 1.9 0 2.4-1.6 3.2-3.3 3.4.3.3.6.8.6 1.5 0 1.1 0 2.1 0 2.5C13.7 14.5 16 11.5 16 8c0-4.4-3.6-8-8-8z"/></svg>
+            GitHub
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div></div>
+  </div>
+
+  <aside class="auth-panel">
+    <div></div>
+    <div class="panel-quote">
+      <p class="mark">"Onboarding took a week, not a quarter. AI Nexus paid for itself before we'd finished setting it up."</p>
+      <p class="who"><strong>David Smith</strong> — Head of Ops, Heliosys</p>
+    </div>
+    <div class="panel-stats">
+      <div><span class="n">500+</span><span class="l">Companies</span></div>
+      <div><span class="n">98%</span><span class="l">Success rate</span></div>
+      <div><span class="n">24/7</span><span class="l">Support</span></div>
+    </div>
+  </aside>
+
+</div>
+
+<script>
+const ACCOUNTS_KEY = 'ainexus_accounts';
+const SESSION_KEY = 'ainexus_session';
+
+function getAccounts(){
+  return JSON.parse(localStorage.getItem(ACCOUNTS_KEY) || '{}');
+}
+function saveAccounts(accounts){
+  localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts));
+}
+function startSession(account){
+  localStorage.setItem(SESSION_KEY, JSON.stringify(account));
+}
+
+const form = document.getElementById('signupForm');
+const formMsg = document.getElementById('formMsg');
+
+function setError(fieldId, isInvalid){
+  document.getElementById(fieldId).classList.toggle('invalid', isInvalid);
+}
+function showMsg(text, isError){
+  formMsg.textContent = text;
+  formMsg.classList.toggle('success', !isError);
+  formMsg.classList.add('show');
+}
+
+form.addEventListener('submit', function(e){
+  e.preventDefault();
+  let valid = true;
+
+  const first = document.getElementById('su-first');
+  const last = document.getElementById('su-last');
+  const email = document.getElementById('su-email');
+  const company = document.getElementById('su-company');
+  const password = document.getElementById('su-password');
+  const terms = document.getElementById('su-terms');
+
+  setError('field-firstname', !first.value.trim()); if(!first.value.trim()) valid = false;
+  setError('field-lastname', !last.value.trim()); if(!last.value.trim()) valid = false;
+
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim());
+  setError('field-email', !emailValid); if(!emailValid) valid = false;
+
+  setError('field-company', !company.value.trim()); if(!company.value.trim()) valid = false;
+
+  const passValid = password.value.length >= 8;
+  setError('field-password', !passValid); if(!passValid) valid = false;
+
+  if(!valid){
+    showMsg('Please fix the highlighted fields above.', true);
+    return;
+  }
+  if(!terms.checked){
+    showMsg('You need to agree to the Terms of Service and Privacy Policy to continue.', true);
+    return;
+  }
+
+  const emailKey = email.value.trim().toLowerCase();
+  const accounts = getAccounts();
+
+  if(accounts[emailKey]){
+    showMsg('An account with this email already exists. Try signing in instead.', true);
+    return;
+  }
+
+  const account = {
+    email: emailKey,
+    firstName: first.value.trim(),
+    lastName: last.value.trim(),
+    name: first.value.trim() + ' ' + last.value.trim(),
+    company: company.value.trim(),
+    password: password.value, // demo only — never store real passwords in plain text
+    provider: 'email',
+    createdAt: new Date().toISOString()
+  };
+
+  accounts[emailKey] = account;
+  saveAccounts(accounts);
+  startSession(account);
+
+  showMsg('Account created! Redirecting to your dashboard…', false);
+  setTimeout(()=>{ window.location.href = 'dashboard.html'; }, 900);
+});
+
+function simulateOAuth(provider){
+  const btn = document.getElementById(provider + 'Btn');
+  const original = btn.innerHTML;
+  btn.innerHTML = 'Connecting…';
+  btn.style.opacity = '0.6';
+  btn.style.pointerEvents = 'none';
+
+  setTimeout(()=>{
+    const demoEmail = 'demo.' + provider + '@example.com';
+    const accounts = getAccounts();
+
+    let account = accounts[demoEmail];
+    if(!account){
+      account = {
+        email: demoEmail,
+        firstName: provider === 'google' ? 'Google' : 'GitHub',
+        lastName: 'User',
+        name: (provider === 'google' ? 'Google' : 'GitHub') + ' User',
+        company: 'Demo Company',
+        provider: provider,
+        createdAt: new Date().toISOString()
+      };
+      accounts[demoEmail] = account;
+      saveAccounts(accounts);
+    }
+    startSession(account);
+    window.location.href = 'dashboard.html';
+  }, 900);
+}
+
+document.getElementById('googleBtn').addEventListener('click', ()=> simulateOAuth('google'));
+document.getElementById('githubBtn').addEventListener('click', ()=> simulateOAuth('github'));
+</script>
+
+</body>
+</html>

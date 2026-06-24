@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign in — AI Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+
+/* ============ TOKENS (shared with index.html) ============ */
+:root{
+  --ink:#0B0D0E;
+  --ink-soft:#15181a;
+  --panel:#181b19;
+  --panel-line:#2a2e2b;
+  --paper:#F5F3EE;
+  --paper-dim:#e9e5db;
+  --signal:#FF5A1F;
+  --signal-dim:#a73f17;
+  --sage:#7C8A82;
+  --sage-light:#aab3ad;
+  --text-on-ink:#EFEDE6;
+  --text-on-ink-dim:#8c9590;
+  --text-on-paper:#15181a;
+  --text-on-paper-dim:#5b6661;
+
+  --display: 'Fraunces', serif;
+  --body: 'Inter', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+
+  --edge: clamp(20px, 5vw, 48px);
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+body{
+  background:var(--ink);
+  color:var(--text-on-ink);
+  font-family:var(--body);
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+img,svg{display:block; max-width:100%;}
+a{color:inherit; text-decoration:none;}
+button{font-family:inherit; cursor:pointer; border:none; background:none;}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+}
+:focus-visible{ outline:2px solid var(--signal); outline-offset:3px; border-radius:2px; }
+
+.logo{
+  font-family:var(--display); font-size:20px; font-weight:600;
+  display:flex; align-items:center; gap:9px; letter-spacing:-0.01em;
+}
+.logo .dot{ width:8px; height:8px; background:var(--signal); border-radius:50%; }
+
+.eyebrow{
+  font-family:var(--mono); font-size:12px; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--signal); display:flex; align-items:center; gap:10px; margin-bottom:20px;
+}
+.eyebrow::before{
+  content:''; width:6px; height:6px; background:var(--signal); border-radius:50%;
+  animation:pulse-dot 2.4s ease-out infinite;
+}
+@keyframes pulse-dot{
+  0%{ box-shadow:0 0 0 0 rgba(255,90,31,0.5); }
+  70%{ box-shadow:0 0 0 8px rgba(255,90,31,0); }
+  100%{ box-shadow:0 0 0 0 rgba(255,90,31,0); }
+}
+
+/* ============ BUTTONS ============ */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:9px;
+  padding:14px 26px; font-family:var(--body); font-weight:600; font-size:14.5px;
+  border-radius:3px;
+  transition:transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
+  white-space:nowrap; width:100%;
+}
+.btn-primary{ background:var(--signal); color:#100400; }
+.btn-primary:hover{ transform:translateY(-1px); box-shadow:0 8px 24px -8px rgba(255,90,31,0.55); }
+
+/* ============ LAYOUT ============ */
+.auth-shell{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  min-height:100vh;
+}
+@media (max-width:900px){
+  .auth-shell{ grid-template-columns:1fr; }
+  .auth-panel{ display:none; }
+}
+
+.auth-form-side{
+  display:flex; flex-direction:column;
+  padding:36px var(--edge) 60px;
+}
+.auth-form-side .top-row{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:auto;
+}
+.back-link{
+  font-family:var(--mono); font-size:12.5px; color:var(--text-on-ink-dim);
+  display:flex; align-items:center; gap:7px; transition:color .15s ease;
+}
+.back-link:hover{ color:var(--text-on-ink); }
+
+.auth-form-wrap{
+  width:100%; max-width:380px; margin:0 auto; padding-top:48px;
+}
+.auth-form-wrap h1{
+  font-family:var(--display); font-weight:500; font-size:32px;
+  color:var(--paper); margin-bottom:8px; letter-spacing:-0.01em;
+}
+.auth-form-wrap .sub{
+  color:var(--text-on-ink-dim); font-size:14.5px; margin-bottom:36px;
+}
+.auth-form-wrap .sub a{ color:var(--signal); font-weight:600; }
+.auth-form-wrap .sub a:hover{ text-decoration:underline; }
+
+.form-field{ margin-bottom:18px; }
+.form-field label{
+  display:block; font-family:var(--mono); font-size:11px; text-transform:uppercase;
+  letter-spacing:0.06em; color:var(--text-on-ink-dim); margin-bottom:8px;
+}
+.label-row{ display:flex; justify-content:space-between; align-items:baseline; }
+.label-row a{ font-family:var(--mono); font-size:11px; color:var(--signal); text-transform:none; letter-spacing:0; }
+.label-row a:hover{ text-decoration:underline; }
+.form-field input{
+  width:100%; background:var(--ink-soft); border:1px solid var(--panel-line);
+  border-radius:5px; padding:13px 15px; color:var(--paper);
+  font-family:var(--body); font-size:14.5px; transition:border-color .15s ease;
+}
+.form-field input:focus{ border-color:var(--signal); outline:none; }
+.form-field input::placeholder{ color:var(--text-on-ink-dim); opacity:0.55; }
+.field-error{ font-size:12px; color:var(--signal); margin-top:7px; display:none; }
+.form-field.invalid input{ border-color:var(--signal); }
+.form-field.invalid .field-error{ display:block; }
+
+.check-row{
+  display:flex; align-items:center; gap:9px; margin-bottom:28px;
+  font-size:13px; color:var(--text-on-ink-dim);
+}
+.check-row input{ accent-color:var(--signal); width:14px; height:14px; }
+
+.divider{
+  display:flex; align-items:center; gap:14px; margin:28px 0;
+  font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:0.06em;
+  color:var(--text-on-ink-dim);
+}
+.divider::before, .divider::after{ content:''; flex:1; height:1px; background:var(--panel-line); }
+
+.oauth-row{ display:flex; gap:12px; }
+.oauth-btn{
+  flex:1; display:flex; align-items:center; justify-content:center; gap:9px;
+  padding:12px; border:1px solid var(--panel-line); border-radius:5px;
+  font-size:13.5px; font-weight:500; color:var(--text-on-ink);
+  transition:border-color .15s ease, background .15s ease;
+}
+.oauth-btn:hover{ border-color:var(--sage-light); background:rgba(255,255,255,0.03); }
+
+.form-msg{
+  font-family:var(--mono); font-size:12.5px; padding:12px 14px; border-radius:5px;
+  margin-bottom:20px; display:none; border:1px solid var(--panel-line);
+}
+.form-msg.show{ display:block; }
+.form-msg.success{ color:#7fb88a; border-color:#2c4a32; background:rgba(127,184,138,0.06); }
+
+/* ============ BRAND PANEL ============ */
+.auth-panel{
+  background:linear-gradient(165deg, var(--panel), #0e100f);
+  border-left:1px solid var(--panel-line);
+  position:relative;
+  display:flex; flex-direction:column; justify-content:center;
+  padding:48px;
+  overflow:hidden;
+}
+.auth-panel::before{
+  content:'';
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size:56px 56px;
+  mask-image:radial-gradient(circle at 40% 50%, black, transparent 70%);
+}
+
+.panel-content{ position:relative; z-index:1; max-width:420px; }
+.panel-content .mark{ font-family:var(--display); font-weight:500; font-size:30px; color:var(--paper); line-height:1.25; margin-bottom:20px; }
+.panel-content p.desc{ color:var(--text-on-ink-dim); font-size:15px; line-height:1.7; margin-bottom:36px; }
+
+.mini-mock{
+  background:var(--ink-soft); border:1px solid var(--panel-line); border-radius:8px;
+  padding:16px;
+}
+.mini-mock-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; padding-bottom:12px; border-bottom:1px solid var(--panel-line); }
+.mini-dots{ display:flex; gap:5px; }
+.mini-dots span{ width:7px; height:7px; border-radius:50%; background:var(--panel-line); }
+.mini-dots span:first-child{ background:var(--signal); }
+.mini-mock-top .ml{ font-family:var(--mono); font-size:10px; color:var(--sage); letter-spacing:0.05em; }
+.mini-row{ display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid var(--panel-line); font-family:var(--mono); font-size:12px; }
+.mini-row:last-child{ border-bottom:none; }
+.mini-row .ml{ color:var(--text-on-ink-dim); }
+.mini-row .mv{ color:var(--paper); }
+.mini-row .mv.up{ color:#7fb88a; }
+
+</style>
+</head>
+<body>
+
+<div class="auth-shell">
+
+  <div class="auth-form-side">
+    <div class="top-row">
+      <a class="logo" href="index.html.html"><span class="dot"></span>AI Nexus</a>
+      <a class="back-link" href="index.html.html">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M13 8H3M3 8L7 4M3 8L7 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Back to site
+      </a>
+    </div>
+
+    <div class="auth-form-wrap">
+      <div class="eyebrow" id="formEyebrow">Welcome back</div>
+      <h1 id="formHeading">Sign in</h1>
+      <p class="sub" id="formSub">New to AI Nexus? <a href="signup.html">Create an account</a></p>
+
+      <div class="form-msg success" id="formMsg"></div>
+
+      <form id="loginForm" novalidate>
+        <div class="form-field" id="field-email">
+          <label for="li-email">Email</label>
+          <input type="email" id="li-email" placeholder="you@company.com" autocomplete="email" required>
+          <div class="field-error">Enter a valid email address.</div>
+        </div>
+
+        <div class="form-field" id="field-password">
+          <div class="label-row">
+            <label for="li-password" style="margin-bottom:0;">Password</label>
+            <a href="#" id="forgotPasswordLink">Forgot password?</a>
+          </div>
+          <input type="password" id="li-password" placeholder="Enter your password" autocomplete="current-password" required>
+          <div class="field-error">Enter your password.</div>
+        </div>
+
+        <div class="check-row">
+          <input type="checkbox" id="li-remember">
+          <label for="li-remember">Keep me signed in</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+          Sign in
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+
+        <div class="divider">or continue with</div>
+
+        <div class="oauth-row">
+          <button type="button" class="oauth-btn" id="googleBtn">
+            <svg width="15" height="15" viewBox="0 0 16 16"><path fill="#4285F4" d="M15.7 8.2c0-.5 0-1-.1-1.5H8v3h4.3c-.2 1-.8 1.9-1.7 2.5v2h2.8c1.6-1.5 2.3-3.7 2.3-6z"/><path fill="#34A853" d="M8 16c2.1 0 3.9-.7 5.2-1.9l-2.8-2c-.8.5-1.7.8-2.8.8-2.4 0-4.5-1.6-5.2-3.8H0v2.1C1.4 14.3 4.5 16 8 16z"/><path fill="#FBBC05" d="M2.4 9.5C2.2 8.9 2.1 8.5 2.1 8s.1-.9.3-1.5V4.4H0C-.4 5.5-.6 6.7-.6 8s.2 2.5.6 3.6l2.4-2.1z" transform="translate(.6)"/><path fill="#EA4335" d="M8 3.2c1.2 0 2.2.4 3 1.2l2.5-2.4C12 .6 10.1 0 8 0 4.5 0 1.4 1.7 0 4.4l2.4 2.1C3.5 4.8 5.6 3.2 8 3.2z"/></svg>
+            Google
+          </button>
+          <button type="button" class="oauth-btn" id="githubBtn">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.6 0 0 3.6 0 8c0 3.5 2.3 6.5 5.5 7.6.1-.5.1-1.2.1-1.8-.1 0-.1 0-.2 0-.7 0-1.4-.3-1.8-.9-.4-.6-.6-1.4-1.2-1.7-.2-.1-.3-.2-.3-.4 0-.2.3-.3.6-.3.6.1 1.1.5 1.4 1 .4.6 1 .9 1.8.6.1-.4.3-.7.5-.9-1.7-.2-3.3-1-3.3-3.4 0-.7.3-1.4.8-1.9-.1-.2-.3-.9.1-1.9.7-.2 1.5.3 2.1.7.6-.2 1.3-.3 2-.3s1.4.1 2 .3c.6-.4 1.4-.9 2.1-.7.4 1 .2 1.7.1 1.9.5.5.8 1.2.8 1.9 0 2.4-1.6 3.2-3.3 3.4.3.3.6.8.6 1.5 0 1.1 0 2.1 0 2.5C13.7 14.5 16 11.5 16 8c0-4.4-3.6-8-8-8z"/></svg>
+            GitHub
+          </button>
+        </div>
+      </form>
+
+      <form id="resetForm" novalidate style="display:none;">
+        <div class="form-field" id="field-reset-email">
+          <label for="rs-email">Email</label>
+          <input type="email" id="rs-email" placeholder="you@company.com" autocomplete="email" required>
+          <div class="field-error">We couldn't find an account with that email.</div>
+        </div>
+        <div class="form-field" id="field-reset-password">
+          <label for="rs-password">New password</label>
+          <input type="password" id="rs-password" placeholder="At least 8 characters" autocomplete="new-password" required minlength="8">
+          <div class="field-error">Password must be at least 8 characters.</div>
+        </div>
+        <button type="submit" class="btn btn-primary">Reset password</button>
+        <button type="button" class="btn" id="backToSignIn" style="width:100%; margin-top:10px; border:1px solid var(--panel-line); color:var(--text-on-ink); background:transparent; justify-content:center; display:flex; padding:14px 26px; border-radius:3px; font-weight:600; font-size:14.5px;">Back to sign in</button>
+      </form>
+    </div>
+
+    <div></div>
+  </div>
+
+  <aside class="auth-panel">
+    <div class="panel-content">
+      <p class="mark">Everything you need to see, in one place.</p>
+      <p class="desc">Sign in to pick up exactly where you left off — your workflows, dashboards, and alerts are all waiting.</p>
+      <div class="mini-mock">
+        <div class="mini-mock-top">
+          <div class="mini-dots"><span></span><span></span><span></span></div>
+          <span class="ml">NEXUS-OS · LIVE</span>
+        </div>
+        <div class="mini-row"><span class="ml">Throughput</span><span class="mv up">▲ 128.4k</span></div>
+        <div class="mini-row"><span class="ml">Accuracy</span><span class="mv">99.2%</span></div>
+        <div class="mini-row"><span class="ml">Open alerts</span><span class="mv">3</span></div>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<script>
+const ACCOUNTS_KEY = 'ainexus_accounts';
+const SESSION_KEY = 'ainexus_session';
+
+function getAccounts(){
+  return JSON.parse(localStorage.getItem(ACCOUNTS_KEY) || '{}');
+}
+function saveAccounts(accounts){
+  localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts));
+}
+function startSession(account){
+  localStorage.setItem(SESSION_KEY, JSON.stringify(account));
+}
+
+const form = document.getElementById('loginForm');
+const formMsg = document.getElementById('formMsg');
+
+function setError(fieldId, isInvalid){
+  document.getElementById(fieldId).classList.toggle('invalid', isInvalid);
+}
+function showMsg(text, isError){
+  formMsg.textContent = text;
+  formMsg.classList.toggle('success', !isError);
+  formMsg.classList.add('show');
+}
+
+form.addEventListener('submit', function(e){
+  e.preventDefault();
+  let valid = true;
+
+  const email = document.getElementById('li-email');
+  const password = document.getElementById('li-password');
+
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim());
+  setError('field-email', !emailValid); if(!emailValid) valid = false;
+
+  setError('field-password', !password.value); if(!password.value) valid = false;
+
+  if(!valid){
+    showMsg('Please fix the highlighted fields above.', true);
+    return;
+  }
+
+  const emailKey = email.value.trim().toLowerCase();
+  const accounts = getAccounts();
+  const account = accounts[emailKey];
+
+  if(!account || account.password !== password.value){
+    showMsg('No account matches that email and password. Check your details or create an account.', true);
+    return;
+  }
+
+  startSession(account);
+  showMsg('Signed in! Redirecting to your dashboard…', false);
+  setTimeout(()=>{ window.location.href = 'dashboard.html'; }, 700);
+});
+
+function simulateOAuth(provider){
+  const btn = document.getElementById(provider + 'Btn');
+  btn.innerHTML = 'Connecting…';
+  btn.style.opacity = '0.6';
+  btn.style.pointerEvents = 'none';
+
+  setTimeout(()=>{
+    const demoEmail = 'demo.' + provider + '@example.com';
+    const accounts = getAccounts();
+
+    let account = accounts[demoEmail];
+    if(!account){
+      account = {
+        email: demoEmail,
+        firstName: provider === 'google' ? 'Google' : 'GitHub',
+        lastName: 'User',
+        name: (provider === 'google' ? 'Google' : 'GitHub') + ' User',
+        company: 'Demo Company',
+        provider: provider,
+        createdAt: new Date().toISOString()
+      };
+      accounts[demoEmail] = account;
+      saveAccounts(accounts);
+    }
+    startSession(account);
+    window.location.href = 'dashboard.html';
+  }, 900);
+}
+
+document.getElementById('googleBtn').addEventListener('click', ()=> simulateOAuth('google'));
+document.getElementById('githubBtn').addEventListener('click', ()=> simulateOAuth('github'));
+
+// ---- forgot password flow ----
+const loginForm = document.getElementById('loginForm');
+const resetForm = document.getElementById('resetForm');
+const formEyebrow = document.getElementById('formEyebrow');
+const formHeading = document.getElementById('formHeading');
+const formSub = document.getElementById('formSub');
+
+function showResetForm(){
+  loginForm.style.display = 'none';
+  resetForm.style.display = 'block';
+  formEyebrow.textContent = 'Reset password';
+  formHeading.textContent = 'Reset your password';
+  formSub.innerHTML = 'Enter the email on your account and choose a new password.';
+  formMsg.classList.remove('show');
+}
+function showLoginForm(){
+  resetForm.style.display = 'none';
+  loginForm.style.display = 'block';
+  formEyebrow.textContent = 'Welcome back';
+  formHeading.textContent = 'Sign in';
+  formSub.innerHTML = 'New to AI Nexus? <a href="signup.html">Create an account</a>';
+  formMsg.classList.remove('show');
+}
+
+document.getElementById('forgotPasswordLink').addEventListener('click', (e)=>{
+  e.preventDefault();
+  showResetForm();
+});
+document.getElementById('backToSignIn').addEventListener('click', showLoginForm);
+
+resetForm.addEventListener('submit', function(e){
+  e.preventDefault();
+  let valid = true;
+
+  const rsEmail = document.getElementById('rs-email');
+  const rsPassword = document.getElementById('rs-password');
+
+  const emailKey = rsEmail.value.trim().toLowerCase();
+  const accounts = getAccounts();
+  const accountExists = !!accounts[emailKey];
+
+  setError('field-reset-email', !accountExists); if(!accountExists) valid = false;
+
+  const passValid = rsPassword.value.length >= 8;
+  setError('field-reset-password', !passValid); if(!passValid) valid = false;
+
+  if(!valid){
+    showMsg('Please fix the highlighted fields above.', true);
+    return;
+  }
+
+  accounts[emailKey].password = rsPassword.value;
+  saveAccounts(accounts);
+
+  showMsg('Password updated. You can now sign in with your new password.', false);
+  resetForm.reset();
+  setTimeout(showLoginForm, 1400);
+});
+</script>
+
+</body>
+</html>
